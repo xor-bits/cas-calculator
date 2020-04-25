@@ -11,3 +11,6 @@ Input in LaTeX form, Output in LaTeX form + Images
 ```approx=54/23``` →
 
 ```set=5x^{2}-2x=x=43y``` →
+
+
+![Demo](/github/demo.png)
