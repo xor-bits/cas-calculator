@@ -1,6 +1,4 @@
-
 import discord
-import os
 import calc
 
 
