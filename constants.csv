@@ -1,5 +1,6 @@
-LaTeX	Evaluates to	Description/Name
-c_\\mathit{m}		Meter
-c_\\mathit{s}		Second
-c_\\mathit{c}	(299792458 \cdot \frac{c_\\mathit{m}}{c_\\mathit{s}})	Lspeed
-c_\\mathit{L}	(1.616255 \cdot 10^{-35} \cdot c_\\mathit{m})	Planck length
+"LaTeX	Evaluates to	Description/Name"
+"c_\\mathit{m}		Meter"
+"c_\\mathit{s}		Second"
+"c_\\mathit{c}	(299792458 \cdot \frac{c_\\mathit{m}}{c_\\mathit{s}})	Lspeed"
+"c_\\mathit{L}	(1.616255 \cdot 10^{-35} \cdot c_\\mathit{m})	Planck length"
+c_\\mathit{h][1.055*10^-34*[j]*[s]
