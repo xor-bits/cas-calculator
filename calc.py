@@ -10,8 +10,8 @@ import pandas as pd
 symbols('x y z t')
 
 # constants
-constants = pd.read_csv('constants.csv')
-# print(constants)
+constants = pd.read_excel('constants.xlsx')
+constants = constants.dropna()
 
 
 
@@ -19,12 +19,28 @@ with open('dc_token.txt', 'r') as file:
     TOKEN = file.read().replace('\n', '')
 
 
+def list_constants():
+    return constants
+
+def eval_constants(tex):
+    processed_tex = tex
+    while True:
+        keep = False
+        for index, row in constants.iterrows():
+            print("replace {} with {}".format(row['LaTeX'], row['Evaluates to']))
+            processed_tex = processed_tex.replace(row['LaTeX'], row['Evaluates to'])
+            keep = True
+        if (keep):
+            break
+
+    return latex(processed_tex)
+
 
 # sympy
 def fix_tex(tex):
     return latex(tex.replace("\\left(", "(").replace("\\right)", ")"))
 
-def print(tex, file):
+def print_tex(tex, file):
     tex = fix_tex(tex)
 
     plt.clf()
@@ -52,8 +68,7 @@ def approx(tex):
     tex = fix_tex(tex)
 
     # constants
-    processed_tex = tex
-    processed_tex = processed_tex.replace(r'c_{\mathit{c}}', r'(299792458\cdot\frac{c_{\mathit{m}}}{c_{\mathit{s}}})')
+    processed_tex = eval_constants(tex)
 
     return latex(parse_latex(processed_tex).doit().evalf(15))
 

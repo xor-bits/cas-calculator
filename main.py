@@ -33,7 +33,7 @@ help_string = """
 
 # discord bot
 async def send_tex(channel, tex, desc):
-    calc.print(tex, "tempfile.png")
+    calc.print_tex(tex, "tempfile.png")
     file = discord.File(filename="tempfile.png", fp="tempfile.png")
     await channel.send(file=file, content="```{}: {}```".format(desc, tex))
 
@@ -76,11 +76,12 @@ async def on_message(message):
         elif split[0] == "help":
             await message.channel.send(help_string)
         elif split[0] == "const":
-            await message.channel.send("lol")
+            await message.channel.send(str(calc.list_constants()))
         elif split[0] == "helpconst":
             await message.channel.send("lul")
     except Exception as e:
         await message.channel.send("```Malformed LaTeX {}```".format(split[1]))
+        await message.channel.send("```PY exception: {}```".format(e))
         print('exception: {}'.format(e))
 
 @client.event
