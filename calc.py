@@ -3,15 +3,20 @@ from sympy import latex, Symbol, symbols, solve
 from sympy.parsing.latex import parse_latex
 from matplotlib import pyplot as plt
 from sympy import simplify as simply
+import pandas as pd
 
 
 
 symbols('x y z t')
 
 # constants
-Symbol('c_{\mathit{c}}')
-Symbol('c_{\mathit{m}}')
-Symbol('c_{\mathit{s}}')
+constants = pd.read_csv('constants.csv')
+# print(constants)
+
+
+
+with open('dc_token.txt', 'r') as file:
+    TOKEN = file.read().replace('\n', '')
 
 
 
