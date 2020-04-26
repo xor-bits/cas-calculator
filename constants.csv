@@ -1,4 +1,4 @@
-"LaTeX	Evaluates to	Description/Name"
+﻿"LaTeX	Evaluates to	Description/Name"
 "c_\\mathit{m}		Meter"
 "c_\\mathit{s}		Second"
 "c_\\mathit{c}	(299792458 \cdot \frac{c_\\mathit{m}}{c_\\mathit{s}})	Lspeed"
