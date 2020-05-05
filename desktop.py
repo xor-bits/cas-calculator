@@ -1,19 +1,10 @@
-from tkinter import *
-from tkinter.scrolledtext import ScrolledText
+import tkinter as tk
 from PIL import ImageTk,Image
 import calc
+import io
 
-# root
-root = Tk()
-root.title('discord-bot-calc')
+images = list()
 
-input_text = r'\frac{5}{5}'
-tempfile_name = 'tempfile.png'
-
-input_image = Label(root)
-input_image.grid(row=0, column=2, pady=10)
-
-outputs = list()
 
 
 def wrap_try(tex, command):
@@ -22,82 +13,48 @@ def wrap_try(tex, command):
     except:
         return ""
 
-# update outputs
-def update_outputs():
-    global input_text, tempfile_name
-    for output in outputs:
-        # processed tex
-        tex = output[1](input_text)
-        tex = wrap_try(tex, calc.fix_tex)
-        if input_text == "":
-            continue
-        
-        # insert to textbox
-        output[2].delete(0, END)
-        output[2].insert(0, tex)
-
-        # image
-        calc.print_tex(tex, tempfile_name, (0.0, 0.0, 0.0))
-        image_data = ImageTk.PhotoImage(Image.open(tempfile_name))
-        output[0].configure(image=image_data)
-        output[0].image = image_data
-
-# show iput and update
-def on_modify_input(text):
-    global input_text, tempfile_name, input_image
-    input_text = text
-    input_text = wrap_try(input_text, calc.fix_tex)
-    if input_text == "":
-        return
-
-    calc.print_tex(text, tempfile_name, (0.0, 0.0, 0.0))
-    image_data = ImageTk.PhotoImage(Image.open(tempfile_name))
-    input_image.configure(image=image_data)
-    input_image.image = image_data
-
-    update_outputs()
-
-
-# entry
-def input_field():
-    # description
-    tex_input = Label(root, text="Input:")
-    tex_input.grid(row=0, column=0)
-
-    # input box
-    sv = StringVar()
-    sv.set(input_text)
-    sv.trace("w", lambda name, index, mode, sv=sv: on_modify_input(sv.get()))
-    input_entry = Entry(root, width=50, textvariable=sv)
-    input_entry.grid(row=0, column=1)
-
-def output_field(name, row, action):
-    global outputs
-
-    # description
-    label = Label(root, text=name)
-    label.grid(row=row, column=0)
-
+def add_image(tex, command=None):
     # image
-    image = Label(root)
-    image.grid(row=row, column=2, pady=10)
+    tex = wrap_try(tex, calc.fix_tex)
+    if command != None:
+        tex = command(tex)
+    if tex == "":
+        return
+    buffer = io.BytesIO()
+    calc.print_tex(tex, buffer, (0.0, 0.0, 0.0))
+    buffer.seek(0)
+    img = ImageTk.PhotoImage(Image.open(buffer))
+    images.append(img)
 
-    # textbox
-    sv = StringVar()
-    sv.set(input_text)
-    entry = Entry(root, width=50, textvariable=sv)
-    entry.grid(row=row, column=1)
-
-    outputs.append((image, action, entry))
+    text.image_create(tk.END, image = images[-1]) # Example 1
+    # text.window_create(tk.END, window = tk.Label(text, image = img)) # Example 2
 
 
-# fields
-input_field()
-output_field("Simplified", 3, lambda tex: wrap_try(tex, calc.simplify))
-output_field("Approximated", 5, lambda tex: wrap_try(tex, calc.approx))
 
-# initial update
-on_modify_input(input_text)
+root = tk.Tk()
+root.title("Project <Nspire on steroids>")
 
-# mainloop
+# textbox
+text = tk.Text(root)
+text.pack(padx = 20, pady = 20)
+
+bottom_frame = tk.Frame()
+
+# latex entry
+entry = tk.Entry(bottom_frame, width=40)
+entry.grid(row=0, column=0, padx=5, pady=5)
+
+# button
+button_insert = tk.Button(bottom_frame, text='Insert', command=lambda: add_image(entry.get()))
+button_insert.grid(row=0, column=1)
+button_simplify = tk.Button(bottom_frame, text='Simplify', command=lambda: add_image(entry.get(), calc.simplify))
+button_simplify.grid(row=0, column=2)
+button_approx = tk.Button(bottom_frame, text='Approx', command=lambda: add_image(entry.get(), calc.approx))
+button_approx.grid(row=0, column=3)
+button_solve = tk.Button(bottom_frame, text='Solve', command=lambda: add_image(entry.get(), calc.solve))
+button_solve.grid(row=0, column=4)
+button_graph = tk.Button(bottom_frame, text='Graph', command=lambda: add_image(entry.get(), calc.simplify))
+button_graph.grid(row=0, column=5)
+
+bottom_frame.pack()
 root.mainloop()
