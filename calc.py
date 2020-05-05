@@ -1,6 +1,8 @@
 from __future__ import division
 from sympy import latex, Symbol, symbols, solve
 from sympy.parsing.latex import parse_latex
+import matplotlib
+matplotlib.use("Agg")
 from matplotlib import pyplot as plt
 from sympy import simplify as simply
 import pandas as pd
@@ -27,7 +29,7 @@ def eval_constants(tex):
     while True:
         keep = False
         for index, row in constants.iterrows():
-            print("replace {} with {}".format(row['LaTeX'], row['Evaluates to']))
+            # print("replace {} with {}".format(row['LaTeX'], row['Evaluates to']))
             processed_tex = processed_tex.replace(row['LaTeX'], row['Evaluates to'])
             keep = True
         if (keep):
@@ -40,15 +42,13 @@ def eval_constants(tex):
 def fix_tex(tex):
     return latex(tex.replace("\\left(", "(").replace("\\right)", ")"))
 
-def print_tex(tex, file):
-    tex = fix_tex(tex)
-
+def print_tex(tex, file, color=(1.0, 1.0, 1.0)):
     plt.clf()
     plt.cla()
     plt.close()
 
     #add text
-    plt.text(0, 0.6, r"$%s$" % tex, fontsize = 1000, color=(1.0, 1.0, 1.0))
+    plt.text(0, 0.6, r"$%s$" % tex, fontsize = 1000, color=color)
     plt.axis('off')
 
     #hide axes
@@ -56,7 +56,6 @@ def print_tex(tex, file):
     fig.axes.get_xaxis().set_visible(False)
     fig.axes.get_yaxis().set_visible(False)
     plt.savefig(file, dpi=2, transparent=True, bbox_inches='tight', pad_inches=0)
-    plt.clf()
 
 def simplify(tex):
     tex = fix_tex(tex)
