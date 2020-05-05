@@ -1,15 +1,18 @@
 from __future__ import division
-from sympy import latex, Symbol, symbols, solve
+import sympy as sp
 from sympy.parsing.latex import parse_latex
+from sympy.utilities.lambdify import lambdify, implemented_function
+
 import matplotlib
 matplotlib.use("Agg")
 from matplotlib import pyplot as plt
-from sympy import simplify as simply
+
 import pandas as pd
+import numpy as np
 
 
 
-symbols('x y z t')
+sp.symbols('x y z t')
 
 # constants
 constants = pd.read_excel('constants.xlsx')
@@ -35,12 +38,12 @@ def eval_constants(tex):
         if (keep):
             break
 
-    return latex(processed_tex)
+    return sp.latex(processed_tex)
 
 
 # sympy
 def fix_tex(tex):
-    return latex(tex.replace("\\left(", "(").replace("\\right)", ")"))
+    return sp.latex(tex.replace("\\left(", "(").replace("\\right)", ")"))
 
 def print_tex(tex, file, color=(1.0, 1.0, 1.0)):
     plt.clf()
@@ -57,11 +60,25 @@ def print_tex(tex, file, color=(1.0, 1.0, 1.0)):
     fig.axes.get_yaxis().set_visible(False)
     plt.savefig(file, dpi=2, transparent=True, bbox_inches='tight', pad_inches=0)
 
+def print_plot(tex, file, color=(1.0, 0.0, 0.0)):
+    plt.clf()
+    plt.cla()
+    plt.close()
+
+    #add graph
+    time = np.arange(0, 10, 0.1);
+    f = lambdify('x', parse_latex(tex), 'numpy')
+    amplitude = f(time)
+    plt.plot(time, amplitude)
+    plt.grid(True, which='both')
+    plt.axhline(y=0, color='k')
+    plt.savefig(file, dpi=50)
+
 def simplify(tex):
     tex = fix_tex(tex)
 
     expr = parse_latex(tex)
-    return latex(simply(expr))
+    return sp.latex(sp.simplify(expr))
 
 def approx(tex):
     tex = fix_tex(tex)
@@ -69,16 +86,16 @@ def approx(tex):
     # constants
     processed_tex = eval_constants(tex)
 
-    return latex(parse_latex(processed_tex).doit().evalf(15))
+    return sp.latex(parse_latex(processed_tex).doit().evalf(15))
 
-def f_solve(tex):
+def solve(tex):
     tex = fix_tex(tex)
     
-    return latex(solve(parse_latex(tex)))
+    return sp.latex(sp.solve(parse_latex(tex)))
 
-def f_subs(tex, from_tex, to_tex):
+def subs(tex, from_tex, to_tex):
     from_tex = fix_tex(from_tex)
     to_tex = fix_tex(to_tex)
     tex = fix_tex(tex)
     
-    return latex(parse_latex(tex).subs(parse_latex(from_tex), parse_latex(to_tex)))
+    return sp.latex(parse_latex(tex).subs(parse_latex(from_tex), parse_latex(to_tex)))

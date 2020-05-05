@@ -13,7 +13,7 @@ def wrap_try(tex, command):
     except:
         return ""
 
-def add_image(tex, command=None):
+def add_image(tex, command=None, printter=calc.print_tex):
     # image
     tex = wrap_try(tex, calc.fix_tex)
     if command != None:
@@ -21,7 +21,7 @@ def add_image(tex, command=None):
     if tex == "":
         return
     buffer = io.BytesIO()
-    calc.print_tex(tex, buffer, (0.0, 0.0, 0.0))
+    printter(tex, buffer, (0.0, 0.0, 0.0))
     buffer.seek(0)
     img = ImageTk.PhotoImage(Image.open(buffer))
     images.append(img)
@@ -53,7 +53,7 @@ button_approx = tk.Button(bottom_frame, text='Approx', command=lambda: add_image
 button_approx.grid(row=0, column=3)
 button_solve = tk.Button(bottom_frame, text='Solve', command=lambda: add_image(entry.get(), calc.solve))
 button_solve.grid(row=0, column=4)
-button_graph = tk.Button(bottom_frame, text='Graph', command=lambda: add_image(entry.get(), calc.simplify))
+button_graph = tk.Button(bottom_frame, text='Graph', command=lambda: add_image(entry.get(), printter=calc.print_plot))
 button_graph.grid(row=0, column=5)
 
 bottom_frame.pack()
