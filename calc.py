@@ -43,7 +43,7 @@ def eval_constants(tex):
 
 # sympy
 def fix_tex(tex):
-    return sp.latex(tex.replace("\\left(", "(").replace("\\right)", ")"))
+    return sp.latex(tex.replace("\\left(", "(").replace("\\right)", ")").replace("_{ }^{ }", ""))
 
 def print_tex(tex, file, color=(1.0, 1.0, 1.0)):
     plt.clf()
@@ -66,7 +66,7 @@ def print_plot(tex, file, color=(1.0, 0.0, 0.0)):
     plt.close()
 
     #add graph
-    time = np.arange(0, 10, 0.1);
+    time = np.arange(-10, 10, 0.1);
     f = lambdify('x', parse_latex(tex), 'numpy')
     amplitude = f(time)
     plt.plot(time, amplitude)
