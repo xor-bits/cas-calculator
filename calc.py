@@ -78,7 +78,7 @@ def simplify(tex):
     tex = fix_tex(tex)
 
     expr = parse_latex(tex)
-    return sp.latex(sp.simplify(expr))
+    return sp.latex(sp.simplify(expr).doit())
 
 def approx(tex):
     tex = fix_tex(tex)
