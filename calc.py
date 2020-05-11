@@ -12,7 +12,7 @@ import numpy as np
 
 
 
-sp.symbols('x y z t')
+sp.symbols('x y z t pi')
 
 # constants
 constants = pd.read_excel('constants.xlsx')
@@ -45,6 +45,9 @@ def eval_constants(tex):
 def fix_tex(tex):
     return sp.latex(tex.replace("\\left(", "(").replace("\\right)", ")").replace("_{ }^{ }", ""))
 
+def parse_tex(tex):
+    return parse_latex(tex).subs({sp.Symbol('pi'): sp.pi})
+
 def print_tex(tex, file, color=(1.0, 1.0, 1.0)):
     plt.clf()
     plt.cla()
@@ -67,7 +70,7 @@ def print_plot(tex, file, color=(1.0, 0.0, 0.0)):
 
     #add graph
     time = np.arange(-10, 10, 0.1);
-    f = lambdify('x', parse_latex(tex), 'numpy')
+    f = lambdify('x', parse_tex(tex), 'numpy')
     amplitude = f(time)
     plt.plot(time, amplitude)
     plt.grid(True, which='both')
@@ -77,7 +80,7 @@ def print_plot(tex, file, color=(1.0, 0.0, 0.0)):
 def simplify(tex):
     tex = fix_tex(tex)
 
-    expr = parse_latex(tex)
+    expr = parse_tex(tex)
     return sp.latex(sp.simplify(expr).doit())
 
 def approx(tex):
@@ -86,16 +89,16 @@ def approx(tex):
     # constants
     processed_tex = eval_constants(tex)
 
-    return sp.latex(parse_latex(processed_tex).doit().evalf(15))
+    return sp.latex(parse_tex(processed_tex).doit().evalf(15))
 
 def solve(tex):
     tex = fix_tex(tex)
     
-    return sp.latex(sp.solve(parse_latex(tex)))
+    return sp.latex(sp.solve(parse_tex(tex)))
 
 def subs(tex, from_tex, to_tex):
     from_tex = fix_tex(from_tex)
     to_tex = fix_tex(to_tex)
     tex = fix_tex(tex)
     
-    return sp.latex(parse_latex(tex).subs(parse_latex(from_tex), parse_latex(to_tex)))
+    return sp.latex(parse_tex(tex).subs(parse_tex(from_tex), parse_tex(to_tex)))
