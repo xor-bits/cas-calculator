@@ -20,10 +20,6 @@ constants = constants.dropna()
 
 
 
-with open('dc_token.txt', 'r') as file:
-    TOKEN = file.read().replace('\n', '')
-
-
 def list_constants():
     return constants
 
@@ -95,6 +91,11 @@ def solve(tex):
     tex = fix_tex(tex)
     
     return sp.latex(sp.solve(parse_tex(tex)))
+
+def solve_for(tex_from, tex):
+    tex = fix_tex(tex)
+    
+    return sp.latex(sp.solve(parse_tex(tex_from), parse_tex(tex)))
 
 def subs(tex, from_tex, to_tex):
     from_tex = fix_tex(from_tex)
