@@ -12,7 +12,7 @@ import numpy as np
 
 
 
-sp.symbols('x y z t pi')
+sp.symbols('x y z t pi e')
 
 # constants
 constants = pd.read_excel('constants.xlsx')
@@ -42,7 +42,7 @@ def fix_tex(tex):
     return sp.latex(tex.replace("\\left(", "(").replace("\\right)", ")").replace("_{ }^{ }", ""))
 
 def parse_tex(tex):
-    return parse_latex(tex).subs({sp.Symbol('pi'): sp.pi})
+    return parse_latex(tex).subs({sp.Symbol('pi'): sp.pi}).subs({sp.Symbol('e'): sp.exp(1)})
 
 def print_tex(tex, file, color=(1.0, 1.0, 1.0)):
     plt.clf()
