@@ -6,7 +6,7 @@ import io
 import pickle
 
 images = list() 
-# images = list((image, tex, button))
+# images = list((image, tex, button, (bool)graph))
 # selected = (button, index)
 
 
@@ -20,9 +20,9 @@ def save():
         # buttons
         l = list()
         for (key, name, index) in text.dump("1.0", "end", window=True):
-            for (image, tex, button) in images:
+            for (image, tex, button, graph) in images:
                 if name == str(button):
-                    l.append((index, tex))
+                    l.append((index, tex, graph))
                     break;
 
         file.write(pickle.dumps((l, text.get("1.0", "end"))))
@@ -40,9 +40,8 @@ def open():
         print(l)
 
         # insert buttons
-        for (index, tex) in l[0]:
-            print(index, tex)
-            add_image(tex, text_index=index)
+        for (index, tex, graph) in l[0]:
+            add_image(tex, graph=graph, text_index=index)
         
     file.close()
 
@@ -75,7 +74,7 @@ def wrap_try(tex, command):
     except:
         return ""
 
-def add_image(tex, command=None, printter=calc.print_tex, text_index=tk.INSERT):
+def add_image(tex, command=None, graph=False, text_index=tk.INSERT):
     # image
     tex = wrap_try(tex, calc.fix_tex)
     if command != None:
@@ -89,7 +88,10 @@ def add_image(tex, command=None, printter=calc.print_tex, text_index=tk.INSERT):
     
     # set the image
     buffer = io.BytesIO()
-    printter(tex, buffer, (0.0, 0.0, 0.0))
+    if graph:
+        calc.print_plot(tex, buffer, (0.0, 0.0, 0.0))
+    else:
+        calc.print_tex(tex, buffer, (0.0, 0.0, 0.0))
     buffer.seek(0)
     img = ImageTk.PhotoImage(Image.open(buffer))
     index = len(images)
@@ -97,7 +99,7 @@ def add_image(tex, command=None, printter=calc.print_tex, text_index=tk.INSERT):
     # append image
     button = tk.Button(text, command=lambda: on_click_img(button, index), image=img)
     wnd = text.window_create(text_index, window=button)
-    images.append((img, tex, button))
+    images.append((img, tex, button, graph))
 
 
 
@@ -146,7 +148,7 @@ button_simplify = tk.Button(bottom_frame, text='Simplify', command=lambda: add_i
 button_simplify.grid(row=0, column=3)
 button_approx = tk.Button(bottom_frame, text='Approx', command=lambda: add_image(entry.get(), lambda t: calc.approx(t)))
 button_approx.grid(row=0, column=4)
-button_graph = tk.Button(bottom_frame, text='Graph', command=lambda: add_image(entry.get(), printter=calc.print_plot))
+button_graph = tk.Button(bottom_frame, text='Graph', command=lambda: add_image(entry.get(), graph=True))
 button_graph.grid(row=0, column=5)
 button_update = tk.Button(bottom_frame, text='Update', command=on_update)
 button_update.grid(row=1, column=2)
