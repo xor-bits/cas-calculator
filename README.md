@@ -43,3 +43,6 @@ source __venv__/bin/activate
 ```
 "__venv__\Scripts\activate.ps1"
 ```
+
+### Demo:
+![Demo](/github/demo_main.png)
