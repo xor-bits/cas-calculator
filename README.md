@@ -14,13 +14,13 @@ pip install -r requirements.txt
 #### Windows (PowerShell)
 ```
 python -m venv __venv__
-"__venv__\Source\activate.bat"
+"__venv__\Scripts\activate.bat"
 pip install -r requirements.txt
 ```
 ##### or (CMD)
 ```
 python -m venv __venv__
-"__venv__\Source\activate.ps1"
+"__venv__\Scripts\activate.ps1"
 pip install -r requirements.txt
 ```
 
@@ -37,9 +37,9 @@ source __venv__/bin/activate
 
 ##### Windows (PowerShell)
 ```
-"__venv__\Source\activate.bat"
+"__venv__\Scripts\activate.bat"
 ```
 ##### or (CMD)
 ```
-"__venv__\Source\activate.ps1"
+"__venv__\Scripts\activate.ps1"
 ```
