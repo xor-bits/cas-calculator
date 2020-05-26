@@ -11,13 +11,13 @@ source __venv__/bin/activate
 pip install -r requirements.txt
 ```
 
-#### Windows (PowerShell)
+#### Windows (CMD)
 ```
 python -m venv __venv__
 "__venv__\Scripts\activate.bat"
 pip install -r requirements.txt
 ```
-##### or (CMD)
+##### or (PowerShell)
 ```
 python -m venv __venv__
 "__venv__\Scripts\activate.ps1"
@@ -35,11 +35,11 @@ python desktop.py
 source __venv__/bin/activate
 ```
 
-##### Windows (PowerShell)
+##### Windows (CMD)
 ```
 "__venv__\Scripts\activate.bat"
 ```
-##### or (CMD)
+##### or (PowerShell)
 ```
 "__venv__\Scripts\activate.ps1"
 ```
