@@ -104,7 +104,7 @@ def add_image(tex, command=None, graph=False, text_index=tk.INSERT):
 
 
 root = tk.Tk()
-root.title('Project <Nspire on steroids>')
+root.title('https://github.com/Overpeek/cas-calculator')
 root.resizable(False, False)
 
 # save/open
