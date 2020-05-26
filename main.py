@@ -1,94 +1,159 @@
-import discord
+import tkinter as tk
+from tkinter import filedialog as fd
+from PIL import ImageTk,Image
 import calc
+import io
+import pickle
+
+images = list() 
+# images = list((image, tex, button, (bool)graph))
+# selected = (button, index)
 
 
 
-with open('dc_token.txt', 'r') as file:
-    TOKEN = file.read().replace('\n', '')
-client = discord.Client()
+def save():
+    file = fd.asksaveasfile(mode='wb', initialfile='document1.np2', filetypes=[('NSpire2 files', '.np2')])
+    if file is not None:
+        # text
+        # file.write(pickle.dumps(text))
 
+        # buttons
+        l = list()
+        for (key, name, index) in text.dump("1.0", "end", window=True):
+            for (image, tex, button, graph) in images:
+                if name == str(button):
+                    l.append((index, tex, graph))
+                    break;
 
-help_string = """
-**simplify=<input>**
-> ex. simplify=2+2
+        file.write(pickle.dumps((l, text.get("1.0", "end"))))
+    file.close()
 
-**solve=<input>=<what>**
-> ex. solve=5x^{2}-2x=5
+def open():
+    file = fd.askopenfile(mode='rb', filetypes=[('NSpire2 files', '.np2')])
+    if file is not None:
+        content = file.read()
+        l = pickle.loads(content)
+        
+        # insert text
+        text.delete("1.0", "end")
+        text.insert("end", str(l[1]))
+        print(l)
 
-**approx=<input>**
-> ex. approx=54/23
+        # insert buttons
+        for (index, tex, graph) in l[0]:
+            add_image(tex, graph=graph, text_index=index)
+        
+    file.close()
 
-**set=<from>=<what>=<to>**
-> ex. set=5x^{2}-2x=x=43y
+def on_click_img(button, list_index):
+    global selected
+    selected = (button, list_index)
+    
+    tex = images[list_index][1]
+    output.delete(0, tk.END)
+    output.insert(tk.END, tex)
 
-**help=**
+    print('selected ' + tex)
 
-**const=**
+def on_update():
+    global selected
 
-**helpconst=<const>**
-> ex. helpconst=\\\\mathit{c}
-"""
+    tex = output.get() 
+    
+    # set the image
+    buffer = io.BytesIO()
+    calc.print_tex(tex, buffer, (0.0, 0.0, 0.0))
+    buffer.seek(0)
+    img = ImageTk.PhotoImage(Image.open(buffer))
+    images[selected[1]] = (img, tex)
+    selected[0].configure(image=images[selected[1]][0])
 
-
-
-# discord bot
-async def send_tex(channel, tex, desc):
-    calc.print_tex(tex, "tempfile.png")
-    file = discord.File(filename="tempfile.png", fp="tempfile.png")
-    await channel.send(file=file, content="```{}: {}```".format(desc, tex))
-
-@client.event
-async def on_message(message):
-    # we do not want the bot to reply to itself
-    if message.author == client.user:
-        return
-
+def wrap_try(tex, command):
     try:
-        split = message.content.split("=",1)
-        if split[0] == "simplify":
-            command_input = split[1]
-            fixed_input = calc.fix_tex(command_input)
-            await send_tex(message.channel, fixed_input, "Input")
+        return command(tex)
+    except:
+        return ""
 
-            simplified_input = calc.simplify(fixed_input)
-            await send_tex(message.channel, simplified_input, "Simplified")
-        elif split[0] == "solve":
-            command_input = split[1]
-            fixed_input = calc.fix_tex(command_input)
-            await send_tex(message.channel, fixed_input, "Input")
+def add_image(tex, command=None, graph=False, text_index=tk.INSERT):
+    # image
+    tex = wrap_try(tex, calc.fix_tex)
+    if command != None:
+        tex = command(tex)
+    if tex == "":
+        return
+    
+    # set output
+    output.delete(0, tk.END)
+    output.insert(tk.END, tex)
+    
+    # set the image
+    buffer = io.BytesIO()
+    if graph:
+        calc.print_plot(tex, buffer, (0.0, 0.0, 0.0))
+    else:
+        calc.print_tex(tex, buffer, (0.0, 0.0, 0.0))
+    buffer.seek(0)
+    img = ImageTk.PhotoImage(Image.open(buffer))
+    index = len(images)
 
-            simplified_input = calc.solve(fixed_input)
-            await send_tex(message.channel, simplified_input, "Solved")
-        elif split[0] == "approx":
-            command_input = split[1]
-            fixed_input = calc.fix_tex(command_input)
-            await send_tex(message.channel, fixed_input, "Input")
+    # append image
+    button = tk.Button(text, command=lambda: on_click_img(button, index), image=img)
+    wnd = text.window_create(text_index, window=button)
+    images.append((img, tex, button, graph))
 
-            simplified_input = calc.approx(fixed_input)
-            await send_tex(message.channel, simplified_input, "Approximated")
-        elif split[0] == "set":
-            split_new = message.content.split("=",3) # (set) , (5x^2-2x) , (x) , (43y)
 
-            await message.channel.send("```Input: from ({}) set ({}) to ({})```".format(split_new[1], split_new[2], split_new[3]))
 
-            output = calc.subs(split_new[1], split_new[2], split_new[3])
-            await send_tex(message.channel, output, "Output")
-        elif split[0] == "help":
-            await message.channel.send(help_string)
-        elif split[0] == "const":
-            await message.channel.send(str(calc.list_constants()))
-        elif split[0] == "helpconst":
-            await message.channel.send("lul")
-    except Exception as e:
-        await message.channel.send("```Malformed LaTeX {}```".format(split[1]))
-        await message.channel.send("```PY exception: {}```".format(e))
-        print('exception: {}'.format(e))
+root = tk.Tk()
+root.title('Project <Nspire on steroids>')
+root.resizable(False, False)
 
-@client.event
-async def on_ready():
-    print('Logged in as')
-    print(client.user.name)
-    print(client.user.id)
-    print('------')
+# save/open
+top_frame = tk.Frame()
+menubutton = tk.Menubutton(top_frame, text = 'File')
+menubutton.pack()
+menubutton.menu = tk.Menu(menubutton, tearoff = 0)
+menubutton['menu']=menubutton.menu
+menubutton.menu.add_command(label = 'Save', command=save)
+menubutton.menu.add_command(label = 'Open', command=open)
+menubutton.grid()
+top_frame.grid()
 
-client.run(TOKEN)
+# textbox
+text = tk.Text(root, font=('arial', 16))
+text.grid(padx = 5, pady = 5)
+
+bottom_frame = tk.Frame()
+
+# latex entry
+label_entry = tk.Label(bottom_frame, text='LaTeX input')
+label_entry.grid(row=0, column=0)
+entry = tk.Entry(bottom_frame, width=40)
+entry.grid(row=0, column=1, padx=5, pady=5)
+# latex entry solve
+label_solve_entry = tk.Label(bottom_frame, text='LaTeX solve for')
+label_solve_entry.grid(row=0, column=7)
+solve_entry = tk.Entry(bottom_frame, width=10)
+solve_entry.insert(0, 'x')
+solve_entry.grid(row=0, column=8, padx=5, pady=5)
+# latex output
+label_output = tk.Label(bottom_frame, text='LaTeX output')
+label_output.grid(row=1, column=0)
+output = tk.Entry(bottom_frame, width=40)
+output.grid(row=1, column=1, padx=5, pady=5)
+
+# button
+button_insert = tk.Button(bottom_frame, text='Insert', command=lambda: add_image(entry.get()))
+button_insert.grid(row=0, column=2)
+button_simplify = tk.Button(bottom_frame, text='Simplify', command=lambda: add_image(entry.get(), lambda t: calc.simplify(t)))
+button_simplify.grid(row=0, column=3)
+button_approx = tk.Button(bottom_frame, text='Approx', command=lambda: add_image(entry.get(), lambda t: calc.approx(t)))
+button_approx.grid(row=0, column=4)
+button_graph = tk.Button(bottom_frame, text='Graph', command=lambda: add_image(entry.get(), graph=True))
+button_graph.grid(row=0, column=5)
+button_update = tk.Button(bottom_frame, text='Update', command=on_update)
+button_update.grid(row=1, column=2)
+button_solve = tk.Button(bottom_frame, text='Solve', command=lambda: add_image(entry.get(), lambda t: calc.solve_for(t, solve_entry.get())))
+button_solve.grid(row=0, column=9)
+
+bottom_frame.grid()
+root.mainloop()
