@@ -1,4 +1,7 @@
 dc_token.txt
 tempfile.png
 __pycache__/
+__venv__/
+desktop.build/
+.vscode/
 test.py
