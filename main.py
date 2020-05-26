@@ -142,7 +142,7 @@ output = tk.Entry(bottom_frame, width=40)
 output.grid(row=1, column=1, padx=5, pady=5)
 
 # button
-button_insert = tk.Button(bottom_frame, text='Insert', command=lambda: add_image(entry.get()))
+button_insert = tk.Button(bottom_frame, text='Insert', command=lambda: add_image(entry.get(), lambda t: calc.fix_tex(t)))
 button_insert.grid(row=0, column=2)
 button_simplify = tk.Button(bottom_frame, text='Simplify', command=lambda: add_image(entry.get(), lambda t: calc.simplify(t)))
 button_simplify.grid(row=0, column=3)

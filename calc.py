@@ -11,8 +11,12 @@ import pandas as pd
 import numpy as np
 
 
+def fD(x):
+    return sp.diff(x)
 
 sp.symbols('x y z t pi e')
+D = fD(sp.Symbol('x'))
+
 
 # constants
 constants = pd.read_excel('constants.xlsx')
@@ -41,8 +45,15 @@ def eval_constants(tex):
 def fix_tex(tex):
     return sp.latex(tex.replace("\\left(", "(").replace("\\right)", ")").replace("_{ }^{ }", ""))
 
+# idk any better way
+c_deriv = r'\frac{\partial }{\partial x}('
 def parse_tex(tex):
-    return parse_latex(tex).subs({sp.Symbol('pi'): sp.pi}).subs({sp.Symbol('e'): sp.exp(1)})
+    tex = tex.replace('D(', c_deriv)
+    
+    latex = parse_latex(tex)
+    latex = latex.subs({sp.Symbol('pi'): sp.pi})
+    latex = latex.subs({sp.Symbol('e'): sp.exp(1)})
+    return latex
 
 def print_tex(tex, file, color=(1.0, 1.0, 1.0)):
     plt.clf()
