@@ -1,1 +1,0 @@
-"__venv__\Scripts\activate.bat" & python main.py
