@@ -1,1 +1,1 @@
-start python desktop.py
+start python main.py
