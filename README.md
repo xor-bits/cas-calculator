@@ -27,7 +27,7 @@ pip install -r requirements.txt
 ### Usage:
 Inside the python virtual env
 ```
-python desktop.py
+python main.py
 ```
 #### To activate the python virtual env:
 ##### Linux/MacOS
