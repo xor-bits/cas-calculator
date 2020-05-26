@@ -1,7 +1,19 @@
-cas-calculator for "Kaavaeditori" https://github.com/digabi/rich-text-editor for those who don't like TI-NSpire
+Minimal notepad and LaTeX calculator
+designed to work with "Kaavaeditori" 
+https://github.com/digabi/rich-text-editor 
 
 ### Requires: Python 3
-note: usage of the python virtual env is optional but recommended 
+note: usage of the python virtual env is optional but recommended
+
+### Install/Update/Launch for lazy
+#### Linux/MacOS
+```
+./launch.sh
+```
+#### Windows (CMD)
+```
+launch.bat
+```
 
 ### Installation:
 #### Linux/MacOS
