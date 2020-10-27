@@ -142,12 +142,21 @@ output = tk.Entry(bottom_frame, width=40)
 output.grid(row=1, column=1, padx=5, pady=5)
 
 # button
-button_insert = tk.Button(bottom_frame, text='Insert', command=lambda: add_image(entry.get(), lambda t: calc.fix_tex(t)))
+insert_lambda = lambda event=None: add_image(entry.get(), lambda t: calc.fix_tex(t))
+button_insert = tk.Button(bottom_frame, text='Insert', command=insert_lambda)
 button_insert.grid(row=0, column=2)
-button_simplify = tk.Button(bottom_frame, text='Simplify', command=lambda: add_image(entry.get(), lambda t: calc.simplify(t)))
+root.bind("<Return>", insert_lambda)
+
+simplify_lambda = lambda event=None: add_image(entry.get(), lambda t: calc.simplify(t))
+button_simplify = tk.Button(bottom_frame, text='Simplify', command=simplify_lambda)
 button_simplify.grid(row=0, column=3)
-button_approx = tk.Button(bottom_frame, text='Approx', command=lambda: add_image(entry.get(), lambda t: calc.approx(t)))
+root.bind("<Control-Return>", simplify_lambda)
+
+approx_lambda = lambda event=None: add_image(entry.get(), lambda t: calc.approx(t))
+button_approx = tk.Button(bottom_frame, text='Approx', command=approx_lambda)
 button_approx.grid(row=0, column=4)
+root.bind("<Shift-Return>", approx_lambda)
+
 button_graph = tk.Button(bottom_frame, text='Graph', command=lambda: add_image(entry.get(), graph=True))
 button_graph.grid(row=0, column=5)
 button_update = tk.Button(bottom_frame, text='Update', command=on_update)
