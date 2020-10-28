@@ -7,7 +7,6 @@ import matplotlib
 matplotlib.use("Agg")
 from matplotlib import pyplot as plt
 
-import pandas as pd
 import numpy as np
 
 
@@ -17,28 +16,6 @@ def fD(x):
 sp.symbols('x y z t pi e')
 D = fD(sp.Symbol('x'))
 
-
-# constants
-constants = pd.read_excel('constants.xlsx')
-constants = constants.dropna()
-
-
-
-def list_constants():
-    return constants
-
-def eval_constants(tex):
-    processed_tex = tex
-    while True:
-        keep = False
-        for index, row in constants.iterrows():
-            # print("replace {} with {}".format(row['LaTeX'], row['Evaluates to']))
-            processed_tex = processed_tex.replace(row['LaTeX'], row['Evaluates to'])
-            keep = True
-        if (keep):
-            break
-
-    return sp.latex(processed_tex)
 
 
 # sympy
@@ -96,10 +73,7 @@ def simplify(tex):
 def approx(tex):
     tex = fix_tex(tex)
 
-    # constants
-    processed_tex = eval_constants(tex)
-
-    return sp.latex(parse_tex(processed_tex).doit().evalf(15))
+    return sp.latex(parse_tex(tex).doit().evalf(15))
 
 def solve(tex):
     tex = fix_tex(tex)
