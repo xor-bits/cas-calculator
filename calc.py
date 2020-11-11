@@ -67,6 +67,7 @@ def simplify(tex):
     expr = parse_tex(tex)
     expr = sp.simplify(expr);
     expr = expr.doit()
+    expr = sp.simplify(expr);
 
     return sp.latex(expr)
 
@@ -76,12 +77,12 @@ def approx(tex):
     return sp.latex(parse_tex(tex).doit().evalf(15))
 
 def solve(tex):
-    tex = fix_tex(tex)
+    tex = simplify(fix_tex(tex))
     
     return sp.latex(sp.solve(parse_tex(tex)))
 
 def solve_for(tex_from, tex):
-    tex = fix_tex(tex)
+    tex = simplify(fix_tex(tex))
     
     return sp.latex(sp.solve(parse_tex(tex_from), parse_tex(tex)))
 
